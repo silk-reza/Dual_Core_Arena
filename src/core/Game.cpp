@@ -1,0 +1,71 @@
+//
+// Created by Reza on 7/04/2026.
+//
+
+#include "../../include/core/Game.h"
+#include "../../include/core/Config.h"
+#include <optional>
+
+Game::Game()
+    : window(sf::VideoMode({Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}), "Dual Core Arena - Engine Prototype"),
+    player1(150.f, 325.f, sf::Color::Blue, Config::PLAYER_SPEED),
+    player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED) {
+
+    window.setFramerate(60);
+
+    arena.setSize({Config::ARENA_WIDTH, Config::ARENA_HEIGHT});
+    arena.setPosition({Config::ARENA_X, Config::ARENA_Y});
+    arena.setFillColor(sf::Color(40, 40, 55));
+    arena.setOutlineColor(sf::Color::White);
+    arena.setOutlineThickness(3.f);
+
+    centerLine.setSize({4.f, Config::ARENA_HEIGHT});
+    centerLine.setPosition({498.f, 50.f});
+    centerLine.setFillColor(sf::Color(180, 180, 180));
+
+    arenaBounds = arena.getGlobalBounds();
+}
+
+void Game::processEvents() {
+    while (const std::optional event = window.pollEvent()) {
+        if (event ->is<sf::Event::Closed>()) {
+            window.close();
+        }
+    }
+}
+
+void Game::update() {
+    player1.handleInput(
+        sf::Keyboard::Key::W,
+        sf::Keyboard::Key::A,
+        sf::Keyboard::Key::S,
+        sf::Keyboard::Key::D
+        );
+
+    player2.handleInput(
+        sf::Keyboard::Key::Up,
+        sf::Keyboard::Key::Down,
+        sf::Keyboard::Key::Left,
+        sf::Keyboard::Key::Right
+        );
+
+    player1.keepInsideBounds(arenaBounds);
+    player2.keepInsideBounds(arenaBounds);
+}
+
+void Game::render() {
+    window.clear(sf::Color(25, 25, 35));
+    window.draw(arena);
+    window.draw(centerLine);
+    player1.draw(window);
+    player2.draw(window);
+    window.display();
+}
+
+void Game::run() {
+    while (window.isOpen()) {
+        processEvents();
+        update();
+        render();
+    }
+}
