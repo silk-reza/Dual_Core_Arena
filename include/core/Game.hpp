@@ -3,8 +3,10 @@
 //
 
 #pragma once
-#include <SFML/Graphics.h>
-#include "../entities/Player.h"
+#include <SFML/Graphics.hpp>
+#include "../entities/Player.hpp"
+#include "../managers/EntityManager.hpp"
+#include "../systems/ScoreSystem.hpp"
 
 class Game {
 private:
@@ -15,6 +17,9 @@ private:
 
     Player player1;
     Player player2;
+
+    EntityManager entityManager;
+    ScoreSystem scoreSystem;
 
     void processEvents();
     void update();

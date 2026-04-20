@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "Entity.h"
-#include <SFML/Graphics.h>
+#include "Entity.hpp"
+#include <SFML/Graphics.hpp>
 
 class Projectile : public Entity {
 private:
@@ -12,9 +12,10 @@ private:
     sf::Vector2f direction;
     float speed;
     bool active;
+    int ownerId; // 1 = player1, 2 = player 2
 
 public:
-    Projectile(float x, float y, const sf::Vector2f& direction, float speed);
+    Projectile(float x, float y, const sf::Vector2f& direction, float speed, int ownerId);
 
     void update() override;
     void draw(sf::RenderWindow& window) override;
@@ -22,5 +23,10 @@ public:
     bool isActive() const;
     void deactivate();
 
+    void keepInsideBounds(const sf::FloatRect& bounds);
+
+    int getOwnerId() const;
+
     sf::CircleShape& getBody();
+    const sf::CircleShape& getBody() const;
 };

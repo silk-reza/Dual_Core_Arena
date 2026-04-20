@@ -2,16 +2,19 @@
 // Created by Reza on 7/04/2026.
 //
 
-#include "../../include/core/Game.h"
-#include "../../include/core/Config.h"
+#include "../../include/core/Game.hpp"
+#include "../../include/core/Config.hpp"
+#include "../../include/systems/ProjectileSystem.hpp"
+#include "../../include/systems/CollisionSystem.hpp"
 #include <optional>
+#include <string>
 
 Game::Game()
     : window(sf::VideoMode({Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}), "Dual Core Arena - Engine Prototype"),
     player1(150.f, 325.f, sf::Color::Blue, Config::PLAYER_SPEED),
     player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED) {
 
-    window.setFramerate(60);
+    window.setFramerateLimit(60);
 
     arena.setSize({Config::ARENA_WIDTH, Config::ARENA_HEIGHT});
     arena.setPosition({Config::ARENA_X, Config::ARENA_Y});
@@ -37,8 +40,8 @@ void Game::processEvents() {
 void Game::update() {
     player1.handleInput(
         sf::Keyboard::Key::W,
-        sf::Keyboard::Key::A,
         sf::Keyboard::Key::S,
+        sf::Keyboard::Key::A,
         sf::Keyboard::Key::D
         );
 
@@ -51,14 +54,27 @@ void Game::update() {
 
     player1.keepInsideBounds(arenaBounds);
     player2.keepInsideBounds(arenaBounds);
+
+    ProjectileSystem::handleShooting(entityManager, player1, player2);
+    ProjectileSystem::updateProjectiles(entityManager, arenaBounds);
+
+    CollisionSystem::checkProjectilePlayerCollisions(
+        entityManager,
+        player1,
+        player2,
+        scoreSystem);
 }
 
 void Game::render() {
     window.clear(sf::Color(25, 25, 35));
     window.draw(arena);
     window.draw(centerLine);
+
     player1.draw(window);
     player2.draw(window);
+
+    ProjectileSystem::renderProjectiles(entityManager, window);
+
     window.display();
 }
 

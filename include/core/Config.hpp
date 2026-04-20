@@ -4,10 +4,10 @@
 
 #pragma once
 
-namespace config {
+namespace Config {
     // constexpr se usa para constantes en tiempo de compilacion
     // Puede y deberia evaluarse antes de ejecutar el programa
-    constexpr unsigned int WINDOW_WIDHT = 1000;
+    constexpr unsigned int WINDOW_WIDTH = 1000;
     constexpr unsigned int WINDOW_HEIGHT = 700;
 
     constexpr float ARENA_X = 50.f;

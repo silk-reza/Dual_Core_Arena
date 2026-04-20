@@ -2,8 +2,8 @@
 // Created by Reza on 7/04/2026.
 //
 
-#include "../../include/entities/Player.h"
-#include "../../include/core/Config.h"
+#include "../../include/entities/Player.hpp"
+#include "../../include/core/Config.hpp"
 
 Player::Player(float x, float y, sf::Color color, float speed)
     : Entity(x, y), speed(speed) {
@@ -16,7 +16,7 @@ void Player::handleInput(
     sf::Keyboard::Key up,
     sf::Keyboard::Key down,
     sf::Keyboard::Key left,
-    sf::Keyboard::Key right,
+    sf::Keyboard::Key right
 ) {
     if (sf::Keyboard::isKeyPressed(up))
         body.move({0.f, -speed});
@@ -30,7 +30,7 @@ void Player::handleInput(
     position = body.getPosition();
 }
 
-void Player::keepInsideBounds(const sf::FloatRect &bounds) {
+void Player::keepInsideBounds(const sf::FloatRect& bounds) {
     sf::Vector2f pos = body.getPosition();
     float diameter = body.getRadius() * 2.f;
 
@@ -45,6 +45,9 @@ void Player::keepInsideBounds(const sf::FloatRect &bounds) {
 
     if (pos.y + diameter > bounds.position.y + bounds.size.y)
         pos.y = bounds.position.y + bounds.size.y - diameter;
+
+    body.setPosition(pos);
+    position = pos;
 }
 
 void Player::update() {}
@@ -54,5 +57,9 @@ void Player::draw(sf::RenderWindow& window) {
 }
 
 sf::CircleShape& Player::getBody() {
+    return body;
+}
+
+const sf::CircleShape& Player::getBody() const {
     return body;
 }

@@ -2,10 +2,10 @@
 // Created by Reza on 7/04/2026.
 //
 
-#pragma once;
+#pragma once
 
-#include "Entity.h"
-#include <SFML/Graphics.h>
+#include "Entity.hpp"
+#include <SFML/Graphics.hpp>
 
 class Player : public Entity {
 private:
@@ -28,4 +28,5 @@ public:
     void draw(sf::RenderWindow& window) override;
 
     sf::CircleShape& getBody();
+    const sf::CircleShape& getBody() const;
 };
