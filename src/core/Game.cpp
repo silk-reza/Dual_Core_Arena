@@ -8,25 +8,41 @@
 #include "../../include/systems/CollisionSystem.hpp"
 #include <optional>
 #include <string>
+#include <iostream>
 
 Game::Game()
     : window(sf::VideoMode({Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}), "Dual Core Arena - Engine Prototype"),
     player1(150.f, 325.f, sf::Color::Blue, Config::PLAYER_SPEED),
-    player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED) {
+    player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED){
 
     window.setFramerateLimit(60);
 
+    // Arena
     arena.setSize({Config::ARENA_WIDTH, Config::ARENA_HEIGHT});
     arena.setPosition({Config::ARENA_X, Config::ARENA_Y});
     arena.setFillColor(sf::Color(40, 40, 55));
     arena.setOutlineColor(sf::Color::White);
     arena.setOutlineThickness(3.f);
 
+    // Linea Central
     centerLine.setSize({4.f, Config::ARENA_HEIGHT});
     centerLine.setPosition({498.f, 50.f});
     centerLine.setFillColor(sf::Color(180, 180, 180));
 
     arenaBounds = arena.getGlobalBounds();
+
+    // Cargar Fuentes
+    if (!font.openFromFile("assets/fonts/Orbitron.ttf")) {
+        std::cerr << "Error: could not load font assets/fonts/Orbitron.ttf" << std::endl;
+    }
+
+    // Crear texto DESPUES de cargar la fuente
+    scoreText.emplace(font);
+    scoreText->setCharacterSize(28);
+    scoreText->setFillColor(sf::Color::White);
+    scoreText->setPosition({390.f, 10.f});
+
+    updateScoreText();
 }
 
 void Game::processEvents() {
@@ -34,6 +50,16 @@ void Game::processEvents() {
         if (event ->is<sf::Event::Closed>()) {
             window.close();
         }
+    }
+}
+
+void Game::updateScoreText() {
+    if (scoreText) {
+        scoreText->setString(
+            "P1: " + std::to_string(scoreSystem.getPlayer1Score()) +
+            "   |   " +
+            "P2: " + std::to_string(scoreSystem.getPlayer2Score())
+            );
     }
 }
 
@@ -63,6 +89,8 @@ void Game::update() {
         player1,
         player2,
         scoreSystem);
+
+    updateScoreText();
 }
 
 void Game::render() {
@@ -74,6 +102,10 @@ void Game::render() {
     player2.draw(window);
 
     ProjectileSystem::renderProjectiles(entityManager, window);
+
+    if (scoreText) {
+        window.draw(*scoreText);
+    }
 
     window.display();
 }

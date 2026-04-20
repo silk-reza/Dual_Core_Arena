@@ -7,6 +7,7 @@
 #include "../entities/Player.hpp"
 #include "../managers/EntityManager.hpp"
 #include "../systems/ScoreSystem.hpp"
+#include <optional>
 
 class Game {
 private:
@@ -21,9 +22,16 @@ private:
     EntityManager entityManager;
     ScoreSystem scoreSystem;
 
+    // sf::Font font;
+    // sf::Text scoreText;
+
+    sf::Font font;
+    std::optional<sf::Text> scoreText;
+
     void processEvents();
     void update();
     void render();
+    void updateScoreText();
 
 public:
     Game();
