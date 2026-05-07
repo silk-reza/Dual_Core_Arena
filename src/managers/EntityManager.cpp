@@ -23,3 +23,11 @@ void EntityManager::removeInactiveProjectiles() {
         return !projectile.isActive();
     });
 }
+
+void EntityManager::addEnemy(const Enemy& enemy) {
+    enemies.pushBack(enemy);
+}
+
+LinkedList<Enemy>& EntityManager::getEnemies() {
+    return enemies;
+}

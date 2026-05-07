@@ -39,6 +39,10 @@ add_executable(dual_core_arena src/main.cpp
         include/data_structures/DoublyLinkedList.hpp
         src/main.cpp
         src/main.cpp
-        include/core/Debug.hpp)
+        include/core/Debug.hpp
+        include/systems/EnemySystem.hpp
+        src/systems/EnemySystem.cpp
+        include/systems/EnemySpawner.hpp
+        src/systems/EnemySpawner.cpp)
 
 target_link_libraries(dual_core_arena PRIVATE SFML::Graphics SFML::Audio SFML::Network)

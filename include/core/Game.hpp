@@ -8,6 +8,7 @@
 #include "../managers/EntityManager.hpp"
 #include "../systems/ScoreSystem.hpp"
 #include <optional>
+#include "../systems/EnemySpawner.hpp"
 
 class Game {
 private:
@@ -21,6 +22,7 @@ private:
 
     EntityManager entityManager;
     ScoreSystem scoreSystem;
+    EnemySpawner enemySpawner;
 
     // sf::Font font;
     // sf::Text scoreText;

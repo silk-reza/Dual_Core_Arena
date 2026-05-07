@@ -10,10 +10,13 @@
 #include <string>
 #include <iostream>
 
+#include "../../include/systems/EnemySystem.hpp"
+
 Game::Game()
     : window(sf::VideoMode({Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}), "Dual Core Arena - Engine Prototype"),
     player1(150.f, 325.f, sf::Color::Blue, Config::PLAYER_SPEED),
-    player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED){
+    player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED),
+    enemySpawner(2.0f){
 
     window.setFramerateLimit(60);
 
@@ -43,6 +46,11 @@ Game::Game()
     scoreText->setPosition({390.f, 10.f});
 
     updateScoreText();
+
+    // Enemy Spawner Temporal
+    entityManager.addEnemy(Enemy(400.f, 200.f, 0.8f));
+    entityManager.addEnemy(Enemy(500.f, 100.f, 0.6f));
+    entityManager.addEnemy(Enemy(600.f, 300.f, 0.7f));
 }
 
 void Game::processEvents() {
@@ -84,6 +92,10 @@ void Game::update() {
     ProjectileSystem::handleShooting(entityManager, player1, player2);
     ProjectileSystem::updateProjectiles(entityManager, arenaBounds);
 
+    // Enemy Spawner
+    enemySpawner.update(entityManager, arenaBounds);
+    EnemySystem::updateEnemies(entityManager, arenaBounds);
+
     CollisionSystem::checkProjectilePlayerCollisions(
         entityManager,
         player1,
@@ -100,6 +112,9 @@ void Game::render() {
 
     player1.draw(window);
     player2.draw(window);
+
+    // Spawner de Enemigos
+    EnemySystem::renderEnemies(entityManager, window);
 
     ProjectileSystem::renderProjectiles(entityManager, window);
 
