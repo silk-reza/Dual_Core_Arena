@@ -15,7 +15,7 @@ private:
 public:
     Enemy(float x, float y, float speed);
 
-    void update();
+    void update(const sf::Vector2f& targetPosition);
 
     void draw(sf::RenderWindow& window);
 

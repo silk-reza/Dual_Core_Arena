@@ -94,7 +94,10 @@ void Game::update() {
 
     // Enemy Spawner
     enemySpawner.update(entityManager, arenaBounds);
-    EnemySystem::updateEnemies(entityManager, arenaBounds);
+    EnemySystem::updateEnemies(entityManager,
+        player1,
+        player2,
+        arenaBounds);
 
     CollisionSystem::checkProjectilePlayerCollisions(
         entityManager,

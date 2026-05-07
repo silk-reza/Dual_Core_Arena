@@ -5,10 +5,13 @@
 #pragma once
 
 #include "../managers/EntityManager.hpp"
+#include "../entities/Player.hpp"
 
 class EnemySystem {
 public:
     static void updateEnemies(EntityManager& entityManager,
+                                const Player& player1,
+                                const Player& player2,
                                 const sf::FloatRect& arenaBounds);
 
     static void renderEnemies(EntityManager& entityManager,

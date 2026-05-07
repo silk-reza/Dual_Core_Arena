@@ -13,9 +13,25 @@ Enemy::Enemy(float x, float y, float speed)
     body.setPosition({x, y});
 }
 
-void Enemy::update() {
-    // Movimiento Vertica (Test)
-    body.move({0.f, speed});
+void Enemy::update(const sf::Vector2f& targetPosition) {
+    sf::Vector2f enemyPos = body.getPosition();
+
+    // Direccion hacia el jugador
+    sf::Vector2f direction = targetPosition - enemyPos;
+
+    // Magnitud del vector
+    float magnitude = std::sqrt(
+        direction.x * direction.x +
+           direction.y * direction.y
+        );
+
+    // Evitar division por 0
+    if (magnitude != 0.f) {
+        direction /= magnitude;
+    }
+
+    // Movimiento
+    body.move(direction * speed);
 }
 
 void Enemy::draw(sf::RenderWindow& window) {
@@ -47,4 +63,8 @@ void Enemy::keepInsideBounds(const sf::FloatRect &bounds) {
         pos.y = bounds.position.y + bounds.size.y - diameter;
 
     body.setPosition(pos);
+}
+
+sf::CircleShape& Enemy::getBody() {
+    return body;
 }
