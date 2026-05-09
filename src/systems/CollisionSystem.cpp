@@ -56,3 +56,44 @@ void CollisionSystem::checkProjectilePlayerCollisions(
     }
     entityManager.removeInactiveProjectiles();
 }
+
+void CollisionSystem::checkProjectileEnemyCollisions(
+    EntityManager& entityManager,
+    ScoreSystem& scoreSystem) {
+    Node<Projectile>* projectileNode = entityManager.getProjectiles().getHead();
+
+    while (projectileNode != nullptr) {
+        Projectile& projectile = projectileNode->data;
+
+        if (!projectile.isActive()) {
+            projectileNode = projectileNode->next;
+            continue;
+        }
+
+        Node <Enemy>* enemyNode = entityManager.getEnemies().getHead();
+
+        while (enemyNode != nullptr) {
+            Enemy& enemy = enemyNode->data;
+
+            if (enemy.isActive() &&
+                checkCircleCollision(projectile.getBody(), enemy.getBody())) {
+                projectile.deactivate();
+                enemy.deactivate();
+
+                if (projectile.getOwnerId() == 1)
+                    scoreSystem.addPointToPlayer1();
+                else if (projectile.getOwnerId() == 2)
+                    scoreSystem.addPointToPlayer2();
+
+                break;
+            }
+
+            enemyNode = enemyNode->next;
+        }
+
+        projectileNode = projectileNode->next;
+    }
+
+    entityManager.removeInactiveProjectiles();
+    entityManager.removeInactiveEnemies();
+};

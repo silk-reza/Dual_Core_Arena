@@ -31,3 +31,9 @@ void EntityManager::addEnemy(const Enemy& enemy) {
 LinkedList<Enemy>& EntityManager::getEnemies() {
     return enemies;
 }
+
+void EntityManager::removeInactiveEnemies() {
+    enemies.removeIf([](const Enemy& enemy) {
+        return !enemy.isActive();
+    });
+}

@@ -6,7 +6,7 @@
 #include <cmath>
 
 Enemy::Enemy(float x, float y, float speed)
-    : speed(speed)
+    : speed(speed), active(true)
 {
     body.setRadius(20.f);
     body.setFillColor(sf::Color::Green);
@@ -14,6 +14,8 @@ Enemy::Enemy(float x, float y, float speed)
 }
 
 void Enemy::update(const sf::Vector2f& targetPosition) {
+    if (!active) return;
+
     sf::Vector2f enemyPos = body.getPosition();
 
     // Direccion hacia el jugador
@@ -35,7 +37,9 @@ void Enemy::update(const sf::Vector2f& targetPosition) {
 }
 
 void Enemy::draw(sf::RenderWindow& window) {
-    window.draw(body);
+    if (active) {
+        window.draw(body);
+    }
 }
 
 sf::Vector2f Enemy::getPosition() const {
@@ -65,6 +69,18 @@ void Enemy::keepInsideBounds(const sf::FloatRect &bounds) {
     body.setPosition(pos);
 }
 
+bool Enemy::isActive() const {
+     return active;
+}
+
+void Enemy::deactivate() {
+    active = false;
+}
+
 sf::CircleShape& Enemy::getBody() {
+    return body;
+}
+
+const sf::CircleShape& Enemy::getBody() const {
     return body;
 }

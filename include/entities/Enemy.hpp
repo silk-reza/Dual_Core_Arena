@@ -11,6 +11,7 @@ private:
 
     sf::CircleShape body;
     float speed;
+    bool active;
 
 public:
     Enemy(float x, float y, float speed);
@@ -25,5 +26,9 @@ public:
 
     void keepInsideBounds(const sf::FloatRect& bounds);
 
+    bool isActive() const;
+    void deactivate();
+
     sf::CircleShape& getBody();
+    const sf::CircleShape& getBody() const;
 };

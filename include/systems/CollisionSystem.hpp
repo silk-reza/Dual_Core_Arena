@@ -16,4 +16,9 @@ public:
         Player& player2,
         ScoreSystem& scoreSystem
         );
+
+    static void checkProjectileEnemyCollisions(
+        EntityManager& entityManager,
+        ScoreSystem& scoreSystem
+        );
 };

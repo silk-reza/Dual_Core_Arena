@@ -105,6 +105,11 @@ void Game::update() {
         player2,
         scoreSystem);
 
+    // Colision Enemigo - Proyectil
+    CollisionSystem::checkProjectileEnemyCollisions(
+        entityManager,
+        scoreSystem);
+
     updateScoreText();
 }
 

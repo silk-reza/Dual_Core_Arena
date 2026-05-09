@@ -24,4 +24,8 @@ public:
     void addEnemy(const Enemy& enemy);
 
     LinkedList<Enemy>& getEnemies();
+
+    // Eliminar enemigos en colision
+    const LinkedList<Enemy>& getEnemies() const;
+    void removeInactiveEnemies();
 };
