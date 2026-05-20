@@ -43,6 +43,10 @@ add_executable(dual_core_arena src/main.cpp
         include/systems/EnemySystem.hpp
         src/systems/EnemySystem.cpp
         include/systems/EnemySpawner.hpp
-        src/systems/EnemySpawner.cpp)
+        src/systems/EnemySpawner.cpp
+        include/systems/InputState.hpp
+        include/systems/AIState.hpp
+        include/systems/AISystem.hpp
+        src/systems/AISystem.cpp)
 
 target_link_libraries(dual_core_arena PRIVATE SFML::Graphics SFML::Audio SFML::Network)

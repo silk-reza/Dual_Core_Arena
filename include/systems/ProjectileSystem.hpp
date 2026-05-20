@@ -11,7 +11,9 @@ public:
     static void handleShooting(
         EntityManager& entityManager,
         const Player& player1,
-        const Player& player2
+        const Player& player2,
+        bool p1Shoot,
+        bool p2Shoot
         );
 
     static void updateProjectiles(

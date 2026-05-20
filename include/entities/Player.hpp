@@ -14,6 +14,7 @@ private:
 
 public:
     Player(float x, float y, sf::Color color, float speed);
+    void moveByInput(bool up, bool down, bool left, bool right);
 
     void handleInput(
         sf::Keyboard::Key up,

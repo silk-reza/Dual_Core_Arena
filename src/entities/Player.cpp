@@ -12,23 +12,36 @@ Player::Player(float x, float y, sf::Color color, float speed)
     body.setPosition(position);
 }
 
-void Player::handleInput(
-    sf::Keyboard::Key up,
-    sf::Keyboard::Key down,
-    sf::Keyboard::Key left,
-    sf::Keyboard::Key right
-) {
-    if (sf::Keyboard::isKeyPressed(up))
+void Player::moveByInput(bool up, bool down, bool left, bool right) {
+    if (up)
         body.move({0.f, -speed});
-    if (sf::Keyboard::isKeyPressed(down))
+    if (down)
         body.move({0.f, speed});
-    if (sf::Keyboard::isKeyPressed(left))
+    if (left)
         body.move({-speed, 0.f});
-    if (sf::Keyboard::isKeyPressed(right))
+    if (right)
         body.move({speed, 0.f});
 
     position = body.getPosition();
 }
+
+// void Player::handleInput(
+//     sf::Keyboard::Key up,
+//     sf::Keyboard::Key down,
+//     sf::Keyboard::Key left,
+//     sf::Keyboard::Key right
+// ) {
+//     if (sf::Keyboard::isKeyPressed(up))
+//         body.move({0.f, -speed});
+//     if (sf::Keyboard::isKeyPressed(down))
+//         body.move({0.f, speed});
+//     if (sf::Keyboard::isKeyPressed(left))
+//         body.move({-speed, 0.f});
+//     if (sf::Keyboard::isKeyPressed(right))
+//         body.move({speed, 0.f});
+//
+//     position = body.getPosition();
+// }
 
 void Player::keepInsideBounds(const sf::FloatRect& bounds) {
     sf::Vector2f pos = body.getPosition();

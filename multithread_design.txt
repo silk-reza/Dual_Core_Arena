@@ -1,0 +1,42 @@
+Dual Core Arena - Diseño Multithread Inicial
+
+Hilos implementados:
+
+1. Main Thread
+Responsabilidades:
+- Procesar eventos de ventana
+- Ejecutar update principal
+- Renderizar escena
+- Actualizar proyectiles
+- Actualizar enemigos
+- Verificar colisiones
+- Actualizar score
+
+2. Input Thread
+Responsabilidades:
+- Leer estado del teclado
+- Guardar input en variables atómicas
+
+Recursos compartidos:
+- InputState
+- running
+
+Sincronización:
+- std::atomic<bool>
+
+Recursos que permanecen en Main Thread:
+- sf::RenderWindow
+- sf::Font
+- sf::Text
+- Player
+- EntityManager
+- LinkedList<Projectile>
+- LinkedList<Enemy>
+- ScoreSystem
+
+Próximo hilo:
+- AI Thread
+
+Regla de seguridad:
+El AI Thread no debe modificar directamente las listas enlazadas ni las entidades.
+Solo debe calcular datos simples de decisión.

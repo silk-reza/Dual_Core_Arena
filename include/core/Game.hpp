@@ -9,6 +9,10 @@
 #include "../systems/ScoreSystem.hpp"
 #include <optional>
 #include "../systems/EnemySpawner.hpp"
+#include "../systems/InputState.hpp"
+#include <thread>
+#include <atomic>
+#include "../systems/AIState.hpp"
 
 class Game {
 private:
@@ -24,6 +28,13 @@ private:
     ScoreSystem scoreSystem;
     EnemySpawner enemySpawner;
 
+    InputState inputState;
+    std::thread inputThread;
+    std::atomic<bool> running;
+
+    AIState aiState;
+    std::thread aiThread;
+
     // sf::Font font;
     // sf::Text scoreText;
 
@@ -37,5 +48,6 @@ private:
 
 public:
     Game();
+    ~Game();
     void run();
 };

@@ -9,14 +9,16 @@
 #include <optional>
 #include <string>
 #include <iostream>
-
 #include "../../include/systems/EnemySystem.hpp"
+#include "../../include/systems/InputSystem.hpp"
+#include "../../include/systems/AISystem.hpp"
 
 Game::Game()
     : window(sf::VideoMode({Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}), "Dual Core Arena - Engine Prototype"),
     player1(150.f, 325.f, sf::Color::Blue, Config::PLAYER_SPEED),
     player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED),
-    enemySpawner(2.0f){
+    enemySpawner(2.0f),
+    running(true){
 
     window.setFramerateLimit(60);
 
@@ -51,11 +53,15 @@ Game::Game()
     entityManager.addEnemy(Enemy(400.f, 200.f, 0.8f));
     entityManager.addEnemy(Enemy(500.f, 100.f, 0.6f));
     entityManager.addEnemy(Enemy(600.f, 300.f, 0.7f));
+
+    inputThread = std::thread(InputSystem::run, std::ref(inputState), std::ref(running));
+    aiThread = std::thread(AISystem::run, std::ref(aiState), std::ref(running));
 }
 
 void Game::processEvents() {
     while (const std::optional event = window.pollEvent()) {
         if (event ->is<sf::Event::Closed>()) {
+            running.store(false);
             window.close();
         }
     }
@@ -72,43 +78,55 @@ void Game::updateScoreText() {
 }
 
 void Game::update() {
-    player1.handleInput(
-        sf::Keyboard::Key::W,
-        sf::Keyboard::Key::S,
-        sf::Keyboard::Key::A,
-        sf::Keyboard::Key::D
+    player1.moveByInput(
+        inputState.p1Up.load(),
+        inputState.p1Down.load(),
+        inputState.p1Left.load(),
+        inputState.p1Right.load()
         );
 
-    player2.handleInput(
-        sf::Keyboard::Key::Up,
-        sf::Keyboard::Key::Down,
-        sf::Keyboard::Key::Left,
-        sf::Keyboard::Key::Right
+    player2.moveByInput(
+        inputState.p2Up.load(),
+        inputState.p2Down.load(),
+        inputState.p2Left.load(),
+        inputState.p2Right.load()
         );
 
     player1.keepInsideBounds(arenaBounds);
     player2.keepInsideBounds(arenaBounds);
 
-    ProjectileSystem::handleShooting(entityManager, player1, player2);
+    // ProjectileSystem::handleShooting(entityManager, player1, player2);
+    ProjectileSystem::handleShooting(
+        entityManager,
+        player1,
+        player2,
+        inputState.p1Shoot.load(),
+        inputState.p2Shoot.load()
+        );
     ProjectileSystem::updateProjectiles(entityManager, arenaBounds);
 
     // Enemy Spawner
     enemySpawner.update(entityManager, arenaBounds);
-    EnemySystem::updateEnemies(entityManager,
+    EnemySystem::updateEnemies(
+        entityManager,
         player1,
         player2,
-        arenaBounds);
+        arenaBounds,
+        aiState.targetPlayer.load()
+        );
 
     CollisionSystem::checkProjectilePlayerCollisions(
         entityManager,
         player1,
         player2,
-        scoreSystem);
+        scoreSystem
+        );
 
     // Colision Enemigo - Proyectil
     CollisionSystem::checkProjectileEnemyCollisions(
         entityManager,
-        scoreSystem);
+        scoreSystem
+        );
 
     updateScoreText();
 }
@@ -131,6 +149,16 @@ void Game::render() {
     }
 
     window.display();
+}
+
+Game::~Game() {
+    running.store(false);
+
+    if (inputThread.joinable())
+        inputThread.join();
+
+    if (aiThread.joinable())
+        aiThread.join();
 }
 
 void Game::run() {
