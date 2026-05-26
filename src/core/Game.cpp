@@ -17,7 +17,7 @@ Game::Game()
     : window(sf::VideoMode({Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}), "Dual Core Arena - Engine Prototype"),
     player1(150.f, 325.f, sf::Color::Blue, Config::PLAYER_SPEED),
     player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED),
-    enemySpawner(2.0f),
+    enemySpawner(2.0f, 6),
     running(true){
 
     window.setFramerateLimit(60);

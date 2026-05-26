@@ -4,11 +4,15 @@
 
 #include "../../include/systems/EnemySpawner.hpp"
 #include "../../include/entities/Enemy.hpp"
+#include <cstdlib>
 
-EnemySpawner::EnemySpawner(float intervalSeconds)
-    : spawnInterval(intervalSeconds) {}
+EnemySpawner::EnemySpawner(float intervalSeconds, int maxEnemies)
+    : spawnInterval(intervalSeconds), maxEnemies(maxEnemies) {}
 
 void EnemySpawner::update(EntityManager& entityManager, const sf::FloatRect& arenaBounds) {
+    if (entityManager.getEnemies().size() >= maxEnemies)
+        return;
+
     if (spawnClock.getElapsedTime().asSeconds() >= spawnInterval) {
 
         float enemyRadius = 20.f;

@@ -46,6 +46,18 @@ public:
         return head == nullptr;
     }
 
+    int size() const {
+        int count = 0;
+        Node<T>* current = head;
+
+        while (current != nullptr) {
+            count ++;
+            current = current->next;
+        }
+
+        return count;
+    }
+
     void clear() {
         Node<T>* current = head;
 

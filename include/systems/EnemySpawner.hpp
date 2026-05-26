@@ -12,9 +12,10 @@ class EnemySpawner {
 private:
     sf::Clock spawnClock;
     float spawnInterval;
+    int maxEnemies;
 
 public:
-    EnemySpawner(float intervalSeconds = 2.0f);
+    EnemySpawner(float intervalSeconds = 2.0f, int maxEnemies = 8);
 
     void update(EntityManager& entityManager, const sf::FloatRect& arenaBounds);
 };
