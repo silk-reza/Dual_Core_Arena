@@ -10,10 +10,15 @@ void ProjectileSystem::handleShooting(
     const Player& player1,
     const Player& player2,
     bool p1Shoot,
-    bool p2Shoot
+    bool p2Shoot,
+    bool& p1DidShoot,
+    bool& p2DidShoot
     ) {
     static bool player1ShootPressed = false;
     static bool player2ShootPressed = false;
+
+    p1DidShoot = false;
+    p2DidShoot = false;
 
     if (p1Shoot && !player1ShootPressed) {
         sf::Vector2f pos = player1.getBody().getPosition();
@@ -27,6 +32,7 @@ void ProjectileSystem::handleShooting(
             1
             );
         entityManager.addProjectile(projectile);
+        p1DidShoot = true;
     }
 
     if (p2Shoot && !player2ShootPressed) {
@@ -41,6 +47,7 @@ void ProjectileSystem::handleShooting(
             2
             );
         entityManager.addProjectile(projectile);
+        p2DidShoot = true;
     }
 
     player1ShootPressed = p1Shoot;

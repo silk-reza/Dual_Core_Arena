@@ -13,7 +13,9 @@ public:
         const Player& player1,
         const Player& player2,
         bool p1Shoot,
-        bool p2Shoot
+        bool p2Shoot,
+        bool& p1DidShoot,
+        bool& p2DidShoot
         );
 
     static void updateProjectiles(

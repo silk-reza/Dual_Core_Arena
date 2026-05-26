@@ -47,6 +47,8 @@ add_executable(dual_core_arena src/main.cpp
         include/systems/InputState.hpp
         include/systems/AIState.hpp
         include/systems/AISystem.hpp
-        src/systems/AISystem.cpp)
+        src/systems/AISystem.cpp
+        include/systems/AmmoSystem.hpp
+        src/systems/AmmoSystem.cpp)
 
 target_link_libraries(dual_core_arena PRIVATE SFML::Graphics SFML::Audio SFML::Network)

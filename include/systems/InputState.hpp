@@ -12,10 +12,12 @@ struct InputState {
     std::atomic<bool> p1Left{false};
     std::atomic<bool> p1Right{false};
     std::atomic<bool> p1Shoot{false};
+    std::atomic<bool> p1Reload{false};
 
     std::atomic<bool> p2Up{false};
     std::atomic<bool> p2Down{false};
     std::atomic<bool> p2Left{false};
     std::atomic<bool> p2Right{false};
     std::atomic<bool> p2Shoot{false};
+    std::atomic<bool> p2Reload{false};
 };

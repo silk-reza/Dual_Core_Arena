@@ -13,6 +13,7 @@
 #include <thread>
 #include <atomic>
 #include "../systems/AIState.hpp"
+#include "../systems/AmmoSystem.hpp"
 
 class Game {
 private:
@@ -27,6 +28,7 @@ private:
     EntityManager entityManager;
     ScoreSystem scoreSystem;
     EnemySpawner enemySpawner;
+    AmmoSystem ammoSystem;
 
     InputState inputState;
     std::thread inputThread;

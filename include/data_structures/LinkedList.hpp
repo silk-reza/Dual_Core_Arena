@@ -97,4 +97,17 @@ public:
             }
         }
     }
+
+    // Obtener primer nodo de la lista
+    bool popFront(T& outValue) {
+        if (head == nullptr)
+            return false;
+
+        Node<T>* temp = head;
+        outValue = head->data;
+        head = head->next;
+
+        delete temp;
+        return true;
+    }
 };

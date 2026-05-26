@@ -14,12 +14,14 @@ void InputSystem::run(InputState &inputState, std::atomic<bool> &running) {
         inputState.p1Left.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A));
         inputState.p1Right.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D));
         inputState.p1Shoot.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space));
+        inputState.p1Reload.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R));
 
         inputState.p2Up.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up));
         inputState.p2Down.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down));
         inputState.p2Left.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left));
         inputState.p2Right.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right));
         inputState.p2Shoot.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RControl));
+        inputState.p2Reload.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift));
 
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }

@@ -71,8 +71,10 @@ void Game::updateScoreText() {
     if (scoreText) {
         scoreText->setString(
             "P1: " + std::to_string(scoreSystem.getPlayer1Score()) +
+            " Ammo: " + std::to_string(ammoSystem.getPlayer1Ammo()) +
             "   |   " +
-            "P2: " + std::to_string(scoreSystem.getPlayer2Score())
+            "P2: " + std::to_string(scoreSystem.getPlayer2Score()) +
+            " Ammo: " + std::to_string(ammoSystem.getPlayer2Ammo())
             );
     }
 }
@@ -95,14 +97,41 @@ void Game::update() {
     player1.keepInsideBounds(arenaBounds);
     player2.keepInsideBounds(arenaBounds);
 
+    static bool p1ReloadPressed = false;
+    static bool p2ReloadPressed = false;
+
+    bool p1Reload = inputState.p1Reload.load();
+    bool p2Reload = inputState.p2Reload.load();
+
+    if (p1Reload && !p1ReloadPressed)
+        ammoSystem.reloadPlayer1();
+
+    if (p2Reload && !p2ReloadPressed)
+        ammoSystem.reloadPlayer2();
+
+    p1ReloadPressed = p1Reload;
+    p2ReloadPressed = p2Reload;
+
+    bool p1DidShoot = false;
+    bool p2DidShoot = false;
+
     // ProjectileSystem::handleShooting(entityManager, player1, player2);
     ProjectileSystem::handleShooting(
         entityManager,
         player1,
         player2,
-        inputState.p1Shoot.load(),
-        inputState.p2Shoot.load()
+        inputState.p1Shoot.load() && ammoSystem.canPlayer1Shoot(),
+        inputState.p2Shoot.load() && ammoSystem.canPlayer2Shoot(),
+        p1DidShoot,
+        p2DidShoot
         );
+
+    if (p1DidShoot)
+        ammoSystem.consumePlayer1Ammo();
+
+    if (p2DidShoot)
+        ammoSystem.consumePlayer2Ammo();
+
     ProjectileSystem::updateProjectiles(entityManager, arenaBounds);
 
     // Enemy Spawner
