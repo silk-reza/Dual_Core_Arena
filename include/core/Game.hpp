@@ -15,6 +15,7 @@
 #include "../systems/AIState.hpp"
 #include "../systems/AmmoSystem.hpp"
 #include "../systems/DatabaseSystem.hpp"
+#include "GameState.hpp"
 
 class Game {
 private:
@@ -31,6 +32,10 @@ private:
     EnemySpawner enemySpawner;
     AmmoSystem ammoSystem;
     DatabaseSystem databaseSystem;
+    GameState gameState;
+
+    // Blink para el texto "PAUSED"
+    sf::Clock pauseBlinkClock;
 
     InputState inputState;
     std::thread inputThread;

@@ -52,7 +52,8 @@ add_executable(dual_core_arena src/main.cpp
             include/systems/AmmoSystem.hpp
             src/systems/AmmoSystem.cpp
             include/systems/DatabaseSystem.hpp
-            src/systems/DatabaseSystem.cpp)
+            src/systems/DatabaseSystem.cpp
+        include/core/GameState.hpp)
 
     target_link_libraries(dual_core_arena PRIVATE SFML::Graphics SFML::Audio SFML::Network SQLite::SQLite3)
 

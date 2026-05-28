@@ -24,4 +24,7 @@ struct InputState {
     // SaveGame & LoadGame
     std::atomic<bool> saveGame{false};
     std::atomic<bool> loadGame{false};
+
+    // Play / Pause
+    std::atomic<bool> pauseGame{false};
 };

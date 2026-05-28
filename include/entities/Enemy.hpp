@@ -12,6 +12,7 @@ private:
     sf::CircleShape body;
     float speed;
     bool active;
+    int targetPlayerId;
 
 public:
     Enemy(float x, float y, float speed);
@@ -31,4 +32,7 @@ public:
 
     sf::CircleShape& getBody();
     const sf::CircleShape& getBody() const;
+
+    void updateTarget(const sf::Vector2f& player1Pos, const sf::Vector2f& player2Pos);
+    int getTargetPlayerId() const;
 };

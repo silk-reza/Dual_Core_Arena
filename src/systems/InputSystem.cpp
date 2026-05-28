@@ -27,6 +27,9 @@ void InputSystem::run(InputState &inputState, std::atomic<bool> &running) {
         inputState.saveGame.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F5));
         inputState.loadGame.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F9));
 
+        // Play / Pause
+        inputState.pauseGame.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P));
+
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 }

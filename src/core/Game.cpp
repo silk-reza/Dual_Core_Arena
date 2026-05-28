@@ -19,7 +19,8 @@ Game::Game()
     player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED),
     enemySpawner(2.0f, 6),
     databaseSystem(std::string(PROJECT_ROOT) + "/database/dual_core_arena.db"),
-    running(true){
+    running(true),
+    gameState(GameState::Playing){
 
     window.setFramerateLimit(60);
 
@@ -124,6 +125,23 @@ void Game::loadSavedGame() {
 }
 
 void Game::update() {
+
+    // Begin - Play / Pause
+    static bool pausePressed = false;
+
+    bool pauseNow = inputState.pauseGame.load();
+
+    if (pauseNow && !pausePressed) {
+        if (gameState == GameState::Playing)
+            gameState = GameState::Paused;
+        else if (gameState == GameState::Paused)
+            gameState = GameState::Playing;
+    }
+
+    pausePressed = pauseNow;
+    // End - Play / Pause
+
+    // Begin - SaveGame / LoadGame
     static bool savePressed = false;
     static bool loadPressed = false;
 
@@ -140,83 +158,95 @@ void Game::update() {
 
     savePressed = saveNow;
     loadPressed = loadNow;
+    // End - SaveGame / LoadGame
 
-    player1.moveByInput(
-        inputState.p1Up.load(),
-        inputState.p1Down.load(),
-        inputState.p1Left.load(),
-        inputState.p1Right.load()
-        );
+    if (gameState == GameState::Playing) {
+        player1.moveByInput(
+            inputState.p1Up.load(),
+            inputState.p1Down.load(),
+            inputState.p1Left.load(),
+            inputState.p1Right.load()
+            );
 
-    player2.moveByInput(
-        inputState.p2Up.load(),
-        inputState.p2Down.load(),
-        inputState.p2Left.load(),
-        inputState.p2Right.load()
-        );
+        player2.moveByInput(
+            inputState.p2Up.load(),
+            inputState.p2Down.load(),
+            inputState.p2Left.load(),
+            inputState.p2Right.load()
+            );
 
-    player1.keepInsideBounds(arenaBounds);
-    player2.keepInsideBounds(arenaBounds);
+        player1.keepInsideBounds(arenaBounds);
+        player2.keepInsideBounds(arenaBounds);
 
-    static bool p1ReloadPressed = false;
-    static bool p2ReloadPressed = false;
+        static bool p1ReloadPressed = false;
+        static bool p2ReloadPressed = false;
 
-    bool p1Reload = inputState.p1Reload.load();
-    bool p2Reload = inputState.p2Reload.load();
+        bool p1Reload = inputState.p1Reload.load();
+        bool p2Reload = inputState.p2Reload.load();
 
-    if (p1Reload && !p1ReloadPressed)
-        ammoSystem.reloadPlayer1();
+        if (p1Reload && !p1ReloadPressed)
+            ammoSystem.reloadPlayer1();
 
-    if (p2Reload && !p2ReloadPressed)
-        ammoSystem.reloadPlayer2();
+        if (p2Reload && !p2ReloadPressed)
+            ammoSystem.reloadPlayer2();
 
-    p1ReloadPressed = p1Reload;
-    p2ReloadPressed = p2Reload;
+        p1ReloadPressed = p1Reload;
+        p2ReloadPressed = p2Reload;
 
-    bool p1DidShoot = false;
-    bool p2DidShoot = false;
+        bool p1DidShoot = false;
+        bool p2DidShoot = false;
 
-    // ProjectileSystem::handleShooting(entityManager, player1, player2);
-    ProjectileSystem::handleShooting(
-        entityManager,
-        player1,
-        player2,
-        inputState.p1Shoot.load() && ammoSystem.canPlayer1Shoot(),
-        inputState.p2Shoot.load() && ammoSystem.canPlayer2Shoot(),
-        p1DidShoot,
-        p2DidShoot
-        );
+        // ProjectileSystem::handleShooting(entityManager, player1, player2);
+        ProjectileSystem::handleShooting(
+            entityManager,
+            player1,
+            player2,
+            inputState.p1Shoot.load() && ammoSystem.canPlayer1Shoot(),
+            inputState.p2Shoot.load() && ammoSystem.canPlayer2Shoot(),
+            p1DidShoot,
+            p2DidShoot
+            );
 
-    if (p1DidShoot)
-        ammoSystem.consumePlayer1Ammo();
+        if (p1DidShoot)
+            ammoSystem.consumePlayer1Ammo();
 
-    if (p2DidShoot)
-        ammoSystem.consumePlayer2Ammo();
+        if (p2DidShoot)
+            ammoSystem.consumePlayer2Ammo();
 
-    ProjectileSystem::updateProjectiles(entityManager, arenaBounds);
+        ProjectileSystem::updateProjectiles(entityManager, arenaBounds);
 
-    // Enemy Spawner
-    enemySpawner.update(entityManager, arenaBounds);
-    EnemySystem::updateEnemies(
-        entityManager,
-        player1,
-        player2,
-        arenaBounds,
-        aiState.targetPlayer.load()
-        );
+        // Enemy Spawner
+        enemySpawner.update(entityManager, arenaBounds);
+        // V2 (Version con bug)
+        /* EnemySystem::updateEnemies(
+            entityManager,
+            player1,
+            player2,
+            arenaBounds,
+            aiState.targetPlayer.load()
+            ); */
 
-    CollisionSystem::checkProjectilePlayerCollisions(
-        entityManager,
-        player1,
-        player2,
-        scoreSystem
-        );
+        // V3 (Version temporal)
+        EnemySystem::updateEnemies(
+            entityManager,
+            player1,
+            player2,
+            arenaBounds
+            );
 
-    // Colision Enemigo - Proyectil
-    CollisionSystem::checkProjectileEnemyCollisions(
-        entityManager,
-        scoreSystem
-        );
+        CollisionSystem::checkProjectilePlayerCollisions(
+            entityManager,
+            player1,
+            player2,
+            scoreSystem
+            );
+
+        // Colision Enemigo - Proyectil
+        CollisionSystem::checkProjectileEnemyCollisions(
+            entityManager,
+            scoreSystem
+            );
+    }
 
     updateScoreText();
 }
@@ -236,6 +266,24 @@ void Game::render() {
 
     if (scoreText) {
         window.draw(*scoreText);
+    }
+
+    if (gameState == GameState::Paused && scoreText) {
+       float blinkTime =
+           pauseBlinkClock.getElapsedTime().asSeconds();
+
+        // Visibilidad - Invisibilidad de medio segundo (0.5s)
+        if (static_cast<int>(blinkTime * 2) % 2 == 0) {
+            sf::Text pausedText(font);
+
+            pausedText.setString("PAUSED");
+            pausedText.setCharacterSize(52);
+            pausedText.setStyle(sf::Text::Bold);
+            pausedText.setFillColor(sf::Color(255, 220, 50));
+            pausedText.setPosition({390.f, 300.f});
+
+            window.draw(pausedText);
+        }
     }
 
     window.display();

@@ -6,7 +6,7 @@
 #include <cmath>
 
 Enemy::Enemy(float x, float y, float speed)
-    : speed(speed), active(true)
+    : speed(speed), active(true), targetPlayerId(1)
 {
     body.setRadius(20.f);
     body.setFillColor(sf::Color::Green);
@@ -83,4 +83,32 @@ sf::CircleShape& Enemy::getBody() {
 
 const sf::CircleShape& Enemy::getBody() const {
     return body;
+}
+
+static float distanceSquared(const sf::Vector2f& a, const sf::Vector2f& b) {
+    float dx = a.x - b.x;
+    float dy = a.y - b.y;
+    return dx * dx + dy * dy;
+}
+
+void Enemy::updateTarget(const sf::Vector2f& player1Pos, const sf::Vector2f& player2Pos) {
+    sf::Vector2f enemyPos = body.getPosition();
+
+    float distP1 = distanceSquared(enemyPos, player1Pos);
+    float distP2 = distanceSquared(enemyPos, player2Pos);
+
+    const float switchMargin = 2500.f;
+
+    if (targetPlayerId == 1) {
+        if (distP2 + switchMargin < distP1)
+            targetPlayerId = 2;
+    }
+    else {
+        if (distP1 + switchMargin < distP2)
+            targetPlayerId = 1;
+    }
+}
+
+int Enemy::getTargetPlayerId() const {
+    return targetPlayerId;
 }
