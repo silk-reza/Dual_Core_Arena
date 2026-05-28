@@ -12,6 +12,7 @@
 #include "../../include/systems/EnemySystem.hpp"
 #include "../../include/systems/InputSystem.hpp"
 #include "../../include/systems/AISystem.hpp"
+#include "../../include/systems/HUDSystem.hpp"
 
 Game::Game()
     : window(sf::VideoMode({Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT}), "Dual Core Arena - Engine Prototype"),
@@ -20,7 +21,8 @@ Game::Game()
     enemySpawner(2.0f, 6),
     databaseSystem(std::string(PROJECT_ROOT) + "/database/dual_core_arena.db"),
     running(true),
-    gameState(GameState::Playing){
+    gameState(GameState::Playing),
+    winnerPlayer(0){
 
     window.setFramerateLimit(60);
 
@@ -33,7 +35,7 @@ Game::Game()
 
     // Linea Central
     centerLine.setSize({4.f, Config::ARENA_HEIGHT});
-    centerLine.setPosition({498.f, 50.f});
+    centerLine.setPosition({498.f, Config::ARENA_Y});
     centerLine.setFillColor(sf::Color(180, 180, 180));
 
     arenaBounds = arena.getGlobalBounds();
@@ -50,6 +52,16 @@ Game::Game()
     scoreText->setCharacterSize(28);
     scoreText->setFillColor(sf::Color::White);
     scoreText->setPosition({390.f, 10.f});
+
+    controlsText.emplace(font);
+    controlsText->setCharacterSize(18);
+    controlsText->setFillColor(sf::Color(220, 220, 220));
+    controlsText->setPosition({20.f, 660.f});
+
+    debugText.emplace(font);
+    debugText->setCharacterSize(18);
+    debugText->setFillColor(sf::Color(180, 255, 180));
+    debugText->setPosition({20.f, 10.f});
 
     updateScoreText();
 
@@ -69,6 +81,45 @@ void Game::processEvents() {
             window.close();
         }
     }
+}
+
+void Game::checkGameOver() {
+    if (scoreSystem.getPlayer1Score() >= Config::WINNING_SCORE) {
+        winnerPlayer = 1;
+        gameState = GameState::GameOver;
+
+        databaseSystem.saveScore(
+            scoreSystem.getPlayer1Score(),
+            scoreSystem.getPlayer2Score()
+            );
+    }
+    else if (scoreSystem.getPlayer2Score() >= Config::WINNING_SCORE) {
+        winnerPlayer = 2;
+        gameState = GameState::GameOver;
+
+        databaseSystem.saveScore(
+            scoreSystem.getPlayer1Score(),
+            scoreSystem.getPlayer2Score()
+            );
+    }
+}
+
+void Game::resetGame() {
+    winnerPlayer = 0;
+    gameState = GameState::Playing;
+
+    player1.setPosition({150.f, 325.f});
+    player2.setPosition({800.f, 325.f});
+
+    scoreSystem.reset();
+
+    ammoSystem.reloadPlayer1();
+    ammoSystem.reloadPlayer2();
+
+    entityManager.clearProjectiles();
+    entityManager.clearEnemies();
+
+    updateScoreText();
 }
 
 void Game::updateScoreText() {
@@ -160,6 +211,18 @@ void Game::update() {
     loadPressed = loadNow;
     // End - SaveGame / LoadGame
 
+    // Begin - Restart Game
+    static bool restartPressed = false;
+
+    bool restartNow = inputState.restarGame.load();
+
+    if (gameState == GameState::GameOver && restartNow && !restartPressed) {
+        resetGame();
+    }
+
+    restartPressed = restartNow;
+    // End - Restart Game
+
     if (gameState == GameState::Playing) {
         player1.moveByInput(
             inputState.p1Up.load(),
@@ -246,9 +309,12 @@ void Game::update() {
             entityManager,
             scoreSystem
             );
+
+        checkGameOver();
     }
 
     updateScoreText();
+    updateHUD();
 }
 
 void Game::render() {
@@ -264,10 +330,18 @@ void Game::render() {
 
     ProjectileSystem::renderProjectiles(entityManager, window);
 
-    if (scoreText) {
-        window.draw(*scoreText);
-    }
+   HUDSystem::renderTopHUD(
+       window,
+       font,
+       entityManager,
+       scoreSystem,
+       ammoSystem,
+       gameState
+       );
 
+    HUDSystem::renderControlsHUD(window, font);
+
+    // PAUSED TEXT
     if (gameState == GameState::Paused && scoreText) {
        float blinkTime =
            pauseBlinkClock.getElapsedTime().asSeconds();
@@ -283,6 +357,38 @@ void Game::render() {
             pausedText.setPosition({390.f, 300.f});
 
             window.draw(pausedText);
+        }
+    }
+
+    // GAME OVER TEXT
+    if (gameState == GameState::GameOver) {
+        float blinkTime = gameOverBlinkClock.getElapsedTime().asSeconds();
+
+        sf::Text winnerText(font);
+
+        if (winnerPlayer == 1)
+            winnerText.setString("PLAYER 1 WINS!");
+        else if (winnerPlayer == 2)
+            winnerText.setString("PLAYER 2 WINS!");
+        else
+            winnerText.setString("GAME OVER");
+
+        winnerText.setCharacterSize(52);
+        winnerText.setStyle(sf::Text::Bold);
+        winnerText.setFillColor(sf::Color(255, 220, 50));
+        winnerText.setPosition({300.f, 280.f});
+
+        window.draw(winnerText);
+
+        if (static_cast<int>(blinkTime * 2) % 2 == 0) {
+            sf::Text restartText(font);
+
+            restartText.setString("Press ENTER to restart");
+            restartText.setCharacterSize(26);
+            restartText.setFillColor(sf::Color::White);
+            restartText.setPosition({355.f, 350.f});
+
+            window.draw(restartText);
         }
     }
 
@@ -309,5 +415,49 @@ void Game::run() {
         processEvents();
         update();
         render();
+    }
+}
+
+void Game::updateHUD() {
+    // CONTROLS
+    if (controlsText) {
+        controlsText->setString(
+        "P1: WASD | Space Shoot | R Reload   "
+        "P2: Arrows | Ctrl Shoot | Shift Reload   "
+        "F5 Save | F9 Load | P Pause | Enter Restart"
+        );
+    }
+
+    // DEBUG INFO
+    if (debugText) {
+        std::string stateString;
+
+        switch (gameState) {
+            case GameState::Playing:
+                stateString = "Playing";
+                break;
+
+            case GameState::Paused:
+                stateString = "Paused";
+                break;
+
+            case GameState::GameOver:
+                stateString = "GameOver";
+                break;
+        }
+
+        debugText->setString(
+            "Enemies: " +
+            std::to_string(
+                entityManager.getEnemies().size()
+            )
+            +
+            " | Projectiles: " +
+            std::to_string(
+                entityManager.getProjectiles().size()
+            )
+            +
+            " | State: " +
+            stateString);
     }
 }

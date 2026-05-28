@@ -27,4 +27,7 @@ struct InputState {
 
     // Play / Pause
     std::atomic<bool> pauseGame{false};
+
+    // Reset Game
+    std::atomic<bool> restarGame{false};
 };

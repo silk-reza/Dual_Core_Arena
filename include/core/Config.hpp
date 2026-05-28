@@ -11,13 +11,15 @@ namespace Config {
     constexpr unsigned int WINDOW_HEIGHT = 700;
 
     constexpr float ARENA_X = 50.f;
-    constexpr float ARENA_Y = 50.f;
+    constexpr float ARENA_Y = 90.f;
     constexpr float ARENA_WIDTH = 900.f;
-    constexpr float ARENA_HEIGHT = 600.f;
+    constexpr float ARENA_HEIGHT = 500.f;
 
     constexpr float PLAYER_RADIUS = 25.f;
     constexpr float PLAYER_SPEED = 4.f;
 
     constexpr float PROJECTILE_RADIUS = 6.f;
     constexpr float PROJECTILE_SPEED = 8.f;
+
+    constexpr int WINNING_SCORE = 10;
 }

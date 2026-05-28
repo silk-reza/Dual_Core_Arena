@@ -30,6 +30,9 @@ void InputSystem::run(InputState &inputState, std::atomic<bool> &running) {
         // Play / Pause
         inputState.pauseGame.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P));
 
+        // Restart Game
+        inputState.restarGame.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter));
+
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 }

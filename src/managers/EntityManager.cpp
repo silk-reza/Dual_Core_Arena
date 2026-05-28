@@ -37,3 +37,11 @@ void EntityManager::removeInactiveEnemies() {
         return !enemy.isActive();
     });
 }
+
+void EntityManager::clearProjectiles() {
+    projectiles.clear();
+}
+
+void EntityManager::clearEnemies() {
+    enemies.clear();
+}

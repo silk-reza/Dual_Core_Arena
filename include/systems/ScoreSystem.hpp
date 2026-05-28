@@ -19,4 +19,6 @@ public:
     int getPlayer2Score() const;
 
     void setScores(int p1, int p2);
+
+    void reset();
 };

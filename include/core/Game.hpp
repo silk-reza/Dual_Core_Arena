@@ -37,6 +37,12 @@ private:
     // Blink para el texto "PAUSED"
     sf::Clock pauseBlinkClock;
 
+    int winnerPlayer;
+    sf:: Clock gameOverBlinkClock;
+
+    void checkGameOver();
+    void resetGame();
+
     InputState inputState;
     std::thread inputThread;
     std::atomic<bool> running;
@@ -49,6 +55,10 @@ private:
 
     sf::Font font;
     std::optional<sf::Text> scoreText;
+    std::optional<sf::Text> controlsText;
+    std::optional<sf::Text> debugText;
+
+    void updateHUD();
 
     void processEvents();
     void update();

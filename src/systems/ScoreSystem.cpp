@@ -31,3 +31,8 @@ void ScoreSystem::setScores(int p1, int p2) {
     player1Score = p1;
     player2Score = p2;
 }
+
+void ScoreSystem::reset() {
+    player1Score = 0;
+    player2Score = 0;
+}

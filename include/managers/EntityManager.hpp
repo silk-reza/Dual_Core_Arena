@@ -28,4 +28,7 @@ public:
     // Eliminar enemigos en colision
     const LinkedList<Enemy>& getEnemies() const;
     void removeInactiveEnemies();
+
+    void clearProjectiles();
+    void clearEnemies();
 };
