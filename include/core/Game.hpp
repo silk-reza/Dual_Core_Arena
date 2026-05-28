@@ -14,6 +14,7 @@
 #include <atomic>
 #include "../systems/AIState.hpp"
 #include "../systems/AmmoSystem.hpp"
+#include "../systems/DatabaseSystem.hpp"
 
 class Game {
 private:
@@ -29,6 +30,7 @@ private:
     ScoreSystem scoreSystem;
     EnemySpawner enemySpawner;
     AmmoSystem ammoSystem;
+    DatabaseSystem databaseSystem;
 
     InputState inputState;
     std::thread inputThread;

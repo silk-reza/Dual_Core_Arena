@@ -18,6 +18,7 @@ Game::Game()
     player1(150.f, 325.f, sf::Color::Blue, Config::PLAYER_SPEED),
     player2(800.f, 325.f, sf::Color::Red, Config::PLAYER_SPEED),
     enemySpawner(2.0f, 6),
+    databaseSystem(std::string(PROJECT_ROOT) + "/database/dual_core_arena.db"),
     running(true){
 
     window.setFramerateLimit(60);
@@ -40,6 +41,8 @@ Game::Game()
     if (!font.openFromFile("assets/fonts/Orbitron.ttf")) {
         std::cerr << "Error: could not load font assets/fonts/Orbitron.ttf" << std::endl;
     }
+
+    databaseSystem.initialize();
 
     // Crear texto DESPUES de cargar la fuente
     scoreText.emplace(font);
@@ -71,10 +74,10 @@ void Game::updateScoreText() {
     if (scoreText) {
         scoreText->setString(
             "P1: " + std::to_string(scoreSystem.getPlayer1Score()) +
-            " Ammo: " + std::to_string(ammoSystem.getPlayer1Ammo()) +
+            "; Ammo: " + std::to_string(ammoSystem.getPlayer1Ammo()) +
             "   |   " +
             "P2: " + std::to_string(scoreSystem.getPlayer2Score()) +
-            " Ammo: " + std::to_string(ammoSystem.getPlayer2Ammo())
+            "; Ammo: " + std::to_string(ammoSystem.getPlayer2Ammo())
             );
     }
 }
@@ -188,6 +191,11 @@ Game::~Game() {
 
     if (aiThread.joinable())
         aiThread.join();
+
+    databaseSystem.saveScore(
+        scoreSystem.getPlayer1Score(),
+        scoreSystem.getPlayer2Score()
+        );
 }
 
 void Game::run() {
