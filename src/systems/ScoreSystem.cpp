@@ -26,3 +26,8 @@ int ScoreSystem::getPlayer1Score() const {
 int ScoreSystem::getPlayer2Score() const {
     return player2Score;
 }
+
+void ScoreSystem::setScores(int p1, int p2) {
+    player1Score = p1;
+    player2Score = p2;
+}

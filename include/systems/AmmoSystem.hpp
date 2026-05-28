@@ -33,4 +33,6 @@ public:
 
     int getPlayer1Ammo() const;
     int getPlayer2Ammo() const;
+
+    void setAmmo(int p1Ammo, int p2Ammo);
 };

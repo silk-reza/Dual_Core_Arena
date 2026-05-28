@@ -30,4 +30,6 @@ public:
 
     sf::CircleShape& getBody();
     const sf::CircleShape& getBody() const;
+
+    void setPosition(const sf::Vector2f& newPosition);
 };

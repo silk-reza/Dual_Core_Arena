@@ -72,3 +72,8 @@ int AmmoSystem::getPlayer1Ammo() const {
 int AmmoSystem::getPlayer2Ammo() const {
     return player2Ammo;
 }
+
+void AmmoSystem::setAmmo(int p1Ammo, int p2Ammo) {
+    player1Ammo = p1Ammo;
+    player2Ammo = p2Ammo;
+}

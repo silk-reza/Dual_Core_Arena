@@ -50,6 +50,10 @@ private:
     void render();
     void updateScoreText();
 
+    // SaveGame & LoadGame
+    void saveCurrentGame();
+    void loadSavedGame();
+
 public:
     Game();
     ~Game();

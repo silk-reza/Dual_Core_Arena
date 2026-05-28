@@ -23,6 +23,10 @@ void InputSystem::run(InputState &inputState, std::atomic<bool> &running) {
         inputState.p2Shoot.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RControl));
         inputState.p2Reload.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift));
 
+        // SaveGame & LoadGame
+        inputState.saveGame.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F5));
+        inputState.loadGame.store(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F9));
+
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 }

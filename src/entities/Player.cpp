@@ -76,3 +76,8 @@ sf::CircleShape& Player::getBody() {
 const sf::CircleShape& Player::getBody() const {
     return body;
 }
+
+void Player::setPosition(const sf::Vector2f& newPosition) {
+    body.setPosition(newPosition);
+    position = newPosition;
+}

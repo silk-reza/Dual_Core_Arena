@@ -20,4 +20,8 @@ struct InputState {
     std::atomic<bool> p2Right{false};
     std::atomic<bool> p2Shoot{false};
     std::atomic<bool> p2Reload{false};
+
+    // SaveGame & LoadGame
+    std::atomic<bool> saveGame{false};
+    std::atomic<bool> loadGame{false};
 };

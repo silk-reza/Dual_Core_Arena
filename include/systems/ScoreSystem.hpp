@@ -17,4 +17,6 @@ public:
 
     int getPlayer1Score() const;
     int getPlayer2Score() const;
+
+    void setScores(int p1, int p2);
 };

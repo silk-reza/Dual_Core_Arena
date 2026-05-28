@@ -82,7 +82,65 @@ void Game::updateScoreText() {
     }
 }
 
+void Game::saveCurrentGame() {
+    SaveGameData data{};
+
+    sf::Vector2f p1Pos = player1.getBody().getPosition();
+    sf::Vector2f p2Pos = player2.getBody().getPosition();
+
+    data.player1X = p1Pos.x;
+    data.player1Y = p1Pos.y;
+    data.player2X = p2Pos.x;
+    data.player2Y = p2Pos.y;
+
+    data.player1Score = scoreSystem.getPlayer1Score();
+    data.player2Score = scoreSystem.getPlayer2Score();
+
+    data.player1Ammo = ammoSystem.getPlayer1Ammo();
+    data.player2Ammo = ammoSystem.getPlayer2Ammo();
+
+    data.loaded = true;
+
+    databaseSystem.saveGame(data);
+}
+
+void Game::loadSavedGame() {
+    SaveGameData data = databaseSystem.loadGame();
+
+    if (!data.loaded) {
+        std::cout << "No saved game found. \n";
+        return;
+    }
+
+    player1.setPosition({data.player1X, data.player1Y});
+    player2.setPosition({data.player2X, data.player2Y});
+
+    scoreSystem.setScores(data.player1Score, data.player2Score);
+    ammoSystem.setAmmo(data.player1Ammo, data.player2Ammo);
+
+    updateScoreText();
+
+    std::cout << "Game loaded.\n";
+}
+
 void Game::update() {
+    static bool savePressed = false;
+    static bool loadPressed = false;
+
+    bool saveNow = inputState.saveGame.load();
+    bool loadNow = inputState.loadGame.load();
+
+    if (saveNow && !savePressed) {
+        saveCurrentGame();
+    }
+
+    if (loadNow && !loadPressed) {
+        loadSavedGame();
+    }
+
+    savePressed = saveNow;
+    loadPressed = loadNow;
+
     player1.moveByInput(
         inputState.p1Up.load(),
         inputState.p1Down.load(),
