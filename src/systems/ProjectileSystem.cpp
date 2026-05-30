@@ -4,6 +4,16 @@
 
 #include "../../include/systems/ProjectileSystem.hpp"
 #include "../../include/core/Config.hpp"
+#include <cmath>
+
+static sf::Vector2f normalize(const sf::Vector2f& vector) {
+    float magnitude = std::sqrt(vector.x * vector.x + vector.y * vector.y);
+
+    if (magnitude == 0.f)
+        return {0.f, 0.f};
+
+    return {vector.x / magnitude, vector.y / magnitude};
+}
 
 void ProjectileSystem::handleShooting(
     EntityManager& entityManager,
@@ -27,7 +37,7 @@ void ProjectileSystem::handleShooting(
         Projectile projectile(
             pos.x + radius,
             pos.y + radius,
-            sf::Vector2f(1.f, 0.f),
+            normalize(player2.getBody().getPosition() - player1.getBody().getPosition()),
             Config::PROJECTILE_SPEED,
             1
             );
@@ -42,7 +52,7 @@ void ProjectileSystem::handleShooting(
         Projectile projectile(
             pos.x + radius,
             pos.y + radius,
-            sf::Vector2f(-1.f, 0.f),
+            normalize(player1.getBody().getPosition() - player2.getBody().getPosition()),
             Config::PROJECTILE_SPEED,
             2
             );

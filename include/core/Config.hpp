@@ -19,7 +19,7 @@ namespace Config {
     constexpr float PLAYER_SPEED = 4.f;
 
     constexpr float PROJECTILE_RADIUS = 6.f;
-    constexpr float PROJECTILE_SPEED = 8.f;
+    constexpr float PROJECTILE_SPEED = 12.f; // Usar 14.f para mas "INTENSIDAD"
 
     constexpr int WINNING_SCORE = 10;
 }

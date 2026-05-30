@@ -41,7 +41,7 @@ Game::Game()
     arenaBounds = arena.getGlobalBounds();
 
     // Cargar Fuentes
-    if (!font.openFromFile("assets/fonts/Orbitron.ttf")) {
+    if (!font.openFromFile("../assets/fonts/Orbitron.ttf")) {
         std::cerr << "Error: could not load font assets/fonts/Orbitron.ttf" << std::endl;
     }
 
